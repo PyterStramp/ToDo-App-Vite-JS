@@ -20,12 +20,23 @@ const state = { //no exponer este state
 }
 
 const initStore = () => {
-    console.log(state);
+    loadStore();
     console.log('InitStore §');
 }
 
 const loadStore = () => {
-    throw new Error ('Not implemented');
+    //cargar el localStorage
+    if( !localStorage.getItem('state') ) return; //si viene algo
+        //regresa un string el localStorage
+
+    const { todos = [], filter=Filters.All} = JSON.parse( localStorage.getItem('state') );
+    state.todos = todos;
+    state.filter = filter;    
+}
+
+const saveStateToLocalStorage = () => {
+    //console.log(JSON.stringify(state)); //JSON serializa lo que sea
+    localStorage.setItem('state', JSON.stringify(state));
 }
 
 /**
@@ -52,9 +63,9 @@ const getTodos = (filter = Filters.All) => {
  */
 const addTodo = ( description ) => {
     if (!description) throw new Error ('La descripción es necesaria');
-
     state.todos.push(new Todo(description));
 
+    saveStateToLocalStorage();
 }
 
 /**
@@ -68,6 +79,7 @@ const toggleTodo = ( todoId ) => {
         }
         return todo; //regresar la instancia
     } ); //barre cada uno de los elementos
+    saveStateToLocalStorage();
 }
 
 /**
@@ -76,10 +88,12 @@ const toggleTodo = ( todoId ) => {
  */
 const deleteTodo = ( todoId ) => {
     state.todos = state.todos.filter( todo => todo.id !== todoId ); //busca el id y elimina
+    saveStateToLocalStorage();
 }
 
 const deleteCompleted = () => {
-    state.todos = state.todos.filter( todo => todo.done ); //busca el id y elimina    
+    state.todos = state.todos.filter( todo => !todo.done ); //busca el id y elimina
+    saveStateToLocalStorage();
 }
 
 /**
@@ -89,6 +103,7 @@ const deleteCompleted = () => {
 const setFilter = ( newFilter = Filters.All ) => {
     if (Object.keys(newFilter).length === 0 ) throw new Error ('Filtro vacío');
     state.filter = newFilter;
+    saveStateToLocalStorage();
 }
 
 const getCurrentFilter = () => {
@@ -105,4 +120,5 @@ export default {
     setFilter,
     getCurrentFilter,
     getTodos,
+    //saveStateToLocalStorage,
 }
