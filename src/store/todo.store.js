@@ -2,7 +2,7 @@ import { Todo } from '../todos/models/todo.model';
 
 //estado global de la aplicación
 
-const Filters = {
+export const Filters = {
     All: 'all',
     Completed: 'Completed',
     Pending: 'Pending'
@@ -50,7 +50,7 @@ const getTodos = (filter = Filters.All) => {
             return [...state.todos]; //arreglo
         case Filters.Completed:
             return state.todos.filter( todo => todo.done ); //regresa si la condición está en true
-        case Filters.Completed:
+        case Filters.Pending:
             return state.todos.filter( todo => !todo.done );
         default:
             throw new Error(`El filtro ${filter} no es válido`);
